@@ -1,0 +1,8 @@
+codegen/*
+*.o
+setupEnv.bat
+*.elf
+*.img
+*.map
+*.pyc
+*.d
