@@ -153,22 +153,12 @@ class RegMap(Parser):
      'statement : '
      self.currentContext = self.contextNone
 
-
-   def p_expression_number(self, p):
-      'expression : NUMBER'
-      p[0] = str(p[1])
-
-   def p_expression_name(self, p):
-      'expression : NAME'
-      p[0] = p[1]
-
    def p_value_number(self, p):
       'value : NUMBER'
       p[0] = str(p[1])
 
    def p_value_hex(self, p):
       'value : HEX'
-      print "saw hex"
       p[0] = str(int(p[1],16))
 
    def p_error(self, t):

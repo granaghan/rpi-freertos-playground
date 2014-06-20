@@ -1,7 +1,12 @@
+#ifndef DRIVERS_UART_H_
+#define DRIVERS_UART_H_
+
 #include <codegen/UART.h>
 #include <FreeRTOSConfig.h>
 #include <stdint.h>
 
+// UART pins are not configured by this class and should be configured
+// separately.
 class UART
 {
    public:
@@ -30,3 +35,5 @@ class UART
    private:
       uint8_t* baseAddress;
 };
+
+#endif

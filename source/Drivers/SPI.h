@@ -1,3 +1,6 @@
+#ifndef DRIVERS_SPI_H_
+#define DRIVERS_SPI_H_
+
 #include <codegen/spi.h>
 #include <FreeRTOSConfig.h>
 #include <stdint>
@@ -32,3 +35,5 @@ void setChipSelectPolarity(Polarity polarity)
 {
    writeCS_CSPOL(polarity);
 }
+
+#endif

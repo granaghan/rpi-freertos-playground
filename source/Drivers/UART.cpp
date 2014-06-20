@@ -1,7 +1,13 @@
-#include <Drivers/UART.h>
-#include <codegen/UART.h>
+#include "Drivers/UART.h"
+#include "codegen/UART.h"
 #include <FreeRTOSConfig.h>
+#include <FreeRTOS.h>
+#include <task.h>
 #include <stdint.h>
+extern "C"
+{
+#include "Drivers/gpio.h"
+}
 
 uint8_t* UART::UART0BaseAddress = reinterpret_cast<uint8_t*>(0x20201000);
 
@@ -12,7 +18,7 @@ UART::UART(uint8_t* baseAddress):
    writeCR_UARTEN(baseAddress, 1);
    writeCR_TXE(baseAddress, 1);
    writeCR_RXE(baseAddress, 1);
-   writeLCRH_FEN(baseAddress, 1);
+   //writeLCRH_FEN(baseAddress, 1);
 }
 
 UART::~UART()
@@ -82,7 +88,10 @@ void UART::enableReceive(uint8_t enable)
 
 void UART::sendByte(uint8_t data)
 {
-   while(readFR_TXFF(baseAddress));
+   while(readFR_TXFF(baseAddress))
+   {
+      vTaskDelay(1);
+   }
    writeDR_Data(baseAddress, data);
 }
 

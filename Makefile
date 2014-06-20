@@ -19,7 +19,7 @@ ARM_SRC+=$(CODEGEN_DIR)/$(basename $(notdir $1)).c
 codegen:$(CODEGEN_DIR)/$(basename $(notdir $1)).c $(CODEGEN_DIR)/$(basename $(notdir $1)).h
 $(CODEGEN_DIR)/$(basename $(notdir $1)).c:$1
 	@echo $(notdir $$@) \<-- $(notdir $$<)
-	@$(PYTHON) source/regmaps/RegMapParse.py $$< | python source/regmaps/GenerateRegisterMap.py > $$@
+	@$(PYTHON) source/regmaps/RegMapParse.py $$< | python source/regmaps/GenerateRegisterMap.py --include "io.h" --read_func "read32" --write_func "write32"> $$@
 $(CODEGEN_DIR)/$(basename $(notdir $1)).h:$1
 	@echo $(notdir $$@) \<-- $(notdir $$<)
 	@$(PYTHON) source/regmaps/RegMapParse.py $$< | python source/regmaps/GenerateRegisterMap.py --header > $$@
@@ -62,7 +62,10 @@ THUMB_SRC = \
 #
 ARM_CPP_SRC :=\
    source/Drivers/UART.cpp \
+   source/Drivers/GPIOD.cpp \
+   source/Peripherals/SparkfunLCD.cpp \
    source/tasks.cpp \
+   source/cppSupport.cpp \
 
 ARM_SRC := \
    source/Drivers/interrupts.c \
@@ -79,6 +82,7 @@ STARTUP_SRC := \
 REGMAPS := \
    source/regmaps/SPI.rm \
    source/regmaps/UART.rm \
+   source/regmaps/GPIO.rm \
 
 $(foreach regmap,$(REGMAPS),$(eval $(call addRegmap,$(regmap))))
 
