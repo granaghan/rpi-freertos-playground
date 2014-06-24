@@ -3,37 +3,36 @@
 
 #include <codegen/spi.h>
 #include <FreeRTOSConfig.h>
-#include <stdint>
+#include <stdint.h>
 
-
-void* SPI0BaseAddress = 0x7E204000;
-
-typedef enum Polarity {polarityLow, polarityHigh};
-
-void setClockSpeed(uint32_t frequenct)
+class SPI
 {
-   //writeA
-}
+   public:
+      typedef enum
+      {
+         polarityLow,
+         polarityHigh
+      } Polarity;
 
-void setChannelChipSelectPolarity(uint32_t channel, Polarity polarity)
-{
-   switch(channel)
-   {
-      case 0:
-         writeCS_CSPOL0(polarity);
-         break;
-      case 1:
-         writeCS_CSPOL1(polarity);
-         break;
-      case 2:
-         writeCS_CSPOL2(polarity);
-         break;
-   }
-}
+      SPI(uint8_t* baseAddress);
+      ~SPI();
 
-void setChipSelectPolarity(Polarity polarity)
-{
-   writeCS_CSPOL(polarity);
-}
+      void setClockRate(uint32_t frequency);
+      void setClockPolarity(Polarity polarity);
+      void setChannelChipSelectPolarity(uint32_t channel, Polarity polarity);
+      void setChipSelectPolarity(Polarity polarity);
+      bool dataAvailable();
+      bool transmitFIFOFull();
+      void writeData(uint8_t data);
+      uint8_t readData();
+      void assertChipSelect(uint8_t channel);
+      void setTransferActive(bool active);
+
+      static uint8_t* SPI0BaseAddress;
+
+   private:
+      static const uint32_t coreClockRate;
+      uint8_t* baseAddress;
+};
 
 #endif

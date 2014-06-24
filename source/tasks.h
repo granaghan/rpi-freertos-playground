@@ -4,9 +4,12 @@
 extern "C"
 {
 #endif
+
 #include <task.h>
 
+void initializePlatform();
 void task3(void *pParam);
+
 #ifdef __cplusplus
 }
 #endif
