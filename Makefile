@@ -48,7 +48,6 @@ LINKER_FLAGS=-Xlinker -ortosdemo.elf -Xlinker -M -Xlinker -Map=rtosdemo.map
 #
 THUMB_SRC = \
    source/main.c \
-   source/Drivers/gpio.c \
    source/FreeRTOS/Source/tasks.c \
    source/FreeRTOS/Source/queue.c \
    source/FreeRTOS/Source/list.c \
@@ -62,16 +61,17 @@ THUMB_SRC = \
 #
 ARM_CPP_SRC :=\
    source/Drivers/UART.cpp \
-   source/Drivers/GPIOD.cpp \
+   source/Drivers/GPIO.cpp \
+   source/Drivers/SPI.cpp \
    source/Peripherals/SparkfunLCD.cpp \
    source/tasks.cpp \
    source/cppSupport.cpp \
 
 ARM_SRC := \
    source/Drivers/interrupts.c \
-   source/Drivers/SPI.c \
    source/FreeRTOS/Source/portable/GCC/RaspberryPi/portisr.c \
    source/io.c \
+   source/syscalls.c \
 
 #   source/syscalls.c \
 

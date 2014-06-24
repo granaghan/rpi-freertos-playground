@@ -89,7 +89,7 @@
 void _exit_( int status )
 {
 	( void ) status;
-	vAssertCalled( __LINE__, __FILE__ );
+	//vAssertCalled( __LINE__, __FILE__ );
 	for( ;; );
 }
 /*-----------------------------------------------------------*/

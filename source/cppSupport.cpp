@@ -14,6 +14,18 @@ extern "C"
 // as global/static objects should never be destructed.
 void* __dso_handle;
 
+typedef void (*constructorPtr)(void);
+
+extern constructorPtr _init_array_start[0], _init_array_end[0];
+void _init(void)
+{
+   for(constructorPtr* constructor = _init_array_start; constructor != _init_array_end; constructor++)
+   {
+      (*constructor)();
+   }
+}
+
+
 namespace __cxxabiv1
 {
 	/* guard variables */

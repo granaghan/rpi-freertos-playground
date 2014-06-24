@@ -12,6 +12,7 @@ extern "C"
 #include "Drivers/SPI.h"
 #include "Peripherals/SparkfunLCD.h"
 #include "constants.h"
+#include <stdio.h>
 
 extern "C" void initializePlatform()
 {
@@ -30,7 +31,7 @@ extern "C" void initializePlatform()
 
 char getHexChar(uint8_t c)
 {
-   if(c >= 0 && c <= 9)
+   if(c <= 9)
    {
       return c + '0';
    }
@@ -41,10 +42,13 @@ char getHexChar(uint8_t c)
    return 'x';
 }
 
+UART uart0(UART::UART0BaseAddress);
+
 extern "C" void task3(void *pParam)
 {
    uint32_t data = 0;
    GPIO& gpio = GPIO::getSingleton();
+   char str[255];
    SPI spi(SPI::SPI0BaseAddress);
    spi.setChannelChipSelectPolarity(0, SPI::polarityLow);
    spi.setChipSelectPolarity(SPI::polarityLow);
@@ -67,16 +71,17 @@ extern "C" void task3(void *pParam)
 
       lcd.sendCharacter('x');
       data = spi.readData();
-      lcd.sendCharacter(data >> 4);
-      lcd.sendCharacter(data & 0xF);
+      sprintf(str, "0x%X", data);
+      lcd.sendString(str);
+
       data = spi.readData();
-      lcd.sendCharacter(data >> 4);
-      lcd.sendCharacter(data & 0xF);
+      sprintf(str, "0x%X", data);
+      lcd.sendString(str);
+
       data = spi.readData();
-      lcd.sendCharacter(data >> 4);
-      lcd.sendCharacter(data & 0xF);
-      //lcd.sendCharacter(spi.readData());
-      //lcd.sendCharacter(spi.readData());
+      sprintf(str, "0x%X", data);
+      lcd.sendString(str);
+
       lcd.sendCharacter(' ');
       if(spi.dataAvailable())
       {
