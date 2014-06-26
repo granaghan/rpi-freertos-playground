@@ -11,6 +11,7 @@ extern "C"
 #include "Drivers/GPIO.h"
 #include "Drivers/SPI.h"
 #include "Peripherals/SparkfunLCD.h"
+#include "Peripherals/MAX31855.h"
 #include "constants.h"
 #include <stdio.h>
 
@@ -27,69 +28,115 @@ extern "C" void initializePlatform()
    gpio.setPinFunction(11, GPIO::pinFunctionAlternate0);
    gpio.setPinPullDirection(uartTxPin, GPIO::pullDirectionDown);
    gpio.setPinPullDirection(uartRxPin, GPIO::pullDirectionDown);
+   //gpio.setPinPullDirection(7, GPIO::pullDirectionUp);
+   //gpio.setPinPullDirection(8, GPIO::pullDirectionUp);
+   //gpio.setPinPullDirection(9, GPIO::pullDirectionUp);
+   //gpio.setPinPullDirection(10, GPIO::pullDirectionUp);
+   //gpio.setPinPullDirection(11, GPIO::pullDirectionUp);
+   //gpio.setPinLevel(readyLEDPin, GPIO::pinLevelLow);
 }
 
-char getHexChar(uint8_t c)
+extern "C" void statusOn()
 {
-   if(c <= 9)
-   {
-      return c + '0';
-   }
-   if(c >= 10 && c <= 16)
-   {
-      return (c - 10) + 'A';
-   }
-   return 'x';
-}
-
-UART uart0(UART::UART0BaseAddress);
-
-extern "C" void task3(void *pParam)
-{
-   uint32_t data = 0;
    GPIO& gpio = GPIO::getSingleton();
-   char str[255];
-   SPI spi(SPI::SPI0BaseAddress);
-   spi.setChannelChipSelectPolarity(0, SPI::polarityLow);
-   spi.setChipSelectPolarity(SPI::polarityLow);
-   spi.setClockRate(976000);
-   spi.setTransferActive(true);
+   gpio.setPinLevel(readyLEDPin, GPIO::pinLevelLow);
+}
 
-   vTaskDelay(1000);
-   UART uart(UART::UART0BaseAddress);
-   SparkfunLCD lcd(uart);
-   lcd.setBacklightBrightness(20);
+extern "C" void statusOff()
+{
+   GPIO& gpio = GPIO::getSingleton();
+   gpio.setPinLevel(readyLEDPin, GPIO::pinLevelHigh);
+}
 
-   while(1)
+
+char getHexChar(uint8_t nibble)
+{
+   switch(nibble)
    {
-      //lcd.sendString("123");
-      spi.assertChipSelect(0);
-      spi.writeData(0);
-      spi.writeData(0);
-      spi.writeData(0);
-      spi.writeData(0);
+      case 0:
+         return '0';
+      case 1:
+         return '1';
+      case 2:
+         return '2';
+      case 3:
+         return '3';
+      case 4:
+         return '4';
+      case 5:
+         return '5';
+      case 6:
+         return '6';
+      case 7:
+         return '7';
+      case 8:
+         return '8';
+      case 9:
+         return '9';
+      case 10:
+         return 'A';
+      case 11:
+         return 'B';
+      case 12:
+         return 'C';
+      case 13:
+         return 'D';
+      case 14:
+         return 'E';
+      case 15:
+         return 'F';
+      default:
+         return '-';
+   }
+}
 
-      lcd.sendCharacter('x');
-      data = spi.readData();
-      sprintf(str, "0x%X", data);
-      lcd.sendString(str);
-
-      data = spi.readData();
-      sprintf(str, "0x%X", data);
-      lcd.sendString(str);
-
-      data = spi.readData();
-      sprintf(str, "0x%X", data);
-      lcd.sendString(str);
-
-      lcd.sendCharacter(' ');
-      if(spi.dataAvailable())
+extern "C" void task1(void *pParam)
+{
+   GPIO& gpio = GPIO::getSingleton();
+	int i = 0;
+	while(1) {
+		i++;
+		if(i&1)
       {
          gpio.setPinLevel(readyLEDPin, GPIO::pinLevelLow);
       }
+      else
+      {
+         gpio.setPinLevel(readyLEDPin, GPIO::pinLevelHigh);
+      }
+		vTaskDelay(500);
+	}
+}
 
-		vTaskDelay(1000);
-      spi.assertChipSelect(1);
-		vTaskDelay(1000);
+extern "C" void task3(void *pParam)
+{
+   statusOn();
+   GPIO& gpio = GPIO::getSingleton();
+   gpio.setPinLevel(readyLEDPin, GPIO::pinLevelHigh);
+   UART uart(UART::UART0BaseAddress);
+   SPI spi(SPI::SPI0BaseAddress);
+   spi.setChipSelectPolarity(SPI::polarityLow);
+   spi.setClockRate(976000);
+
+   vTaskDelay(1000);
+   SparkfunLCD lcd(uart);
+   MAX31855 temperatureReader(spi, 0, lcd);
+
+   lcd.setBacklightBrightness(20);
+   lcd.enableCursorBlink(true);
+
+   while(1)
+   {
+      //gpio.setPinLevel(readyLEDPin, GPIO::pinLevelHigh);
+      temperatureReader.readTemperature();
+      lcd.sendCharacter(' ');
+      //gpio.setPinLevel(readyLEDPin, GPIO::pinLevelLow);
+
+      if(spi.dataAvailable())
+      {
+         //gpio.setPinLevel(readyLEDPin, GPIO::pinLevelLow);
+      }
+
+		vTaskDelay(500);
 	}
 }

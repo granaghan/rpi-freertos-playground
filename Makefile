@@ -53,7 +53,7 @@ THUMB_SRC = \
    source/FreeRTOS/Source/list.c \
    source/FreeRTOS/Source/croutine.c \
    source/FreeRTOS/Source/timers.c \
-   source/FreeRTOS/Source/portable/MemMang/heap_2.c \
+   source/FreeRTOS/Source/portable/MemMang/heap_1.c \
    source/FreeRTOS/Source/portable/GCC/RaspberryPi/port.c
 
 #
@@ -64,6 +64,7 @@ ARM_CPP_SRC :=\
    source/Drivers/GPIO.cpp \
    source/Drivers/SPI.cpp \
    source/Peripherals/SparkfunLCD.cpp \
+   source/Peripherals/MAX31855.cpp \
    source/tasks.cpp \
    source/cppSupport.cpp \
 

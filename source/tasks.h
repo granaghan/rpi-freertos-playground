@@ -8,7 +8,10 @@ extern "C"
 #include <task.h>
 
 void initializePlatform();
+void task1(void *pParam);
 void task3(void *pParam);
+void statusOn();
+void statusOff();
 
 #ifdef __cplusplus
 }

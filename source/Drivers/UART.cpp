@@ -1,5 +1,7 @@
 #include "Drivers/UART.h"
 #include "codegen/UART.h"
+#include "Drivers/GPIO.h"
+#include "constants.h"
 #include <FreeRTOSConfig.h>
 #include <FreeRTOS.h>
 #include <task.h>
@@ -14,7 +16,7 @@ UART::UART(uint8_t* baseAddress):
    writeCR_UARTEN(baseAddress, 1);
    writeCR_TXE(baseAddress, 1);
    writeCR_RXE(baseAddress, 1);
-   //writeLCRH_FEN(baseAddress, 1);
+   writeLCRH_FEN(baseAddress, 1);
 }
 
 UART::~UART()
@@ -84,6 +86,8 @@ void UART::enableReceive(uint8_t enable)
 
 void UART::sendByte(uint8_t data)
 {
+   GPIO& gpio = GPIO::getSingleton();
+   uint32_t i = 0;
    while(readFR_TXFF(baseAddress))
    {
       vTaskDelay(1);

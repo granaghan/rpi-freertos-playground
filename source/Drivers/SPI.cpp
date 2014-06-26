@@ -14,7 +14,9 @@ typedef enum
 
 SPI::SPI(uint8_t* baseAddress):
    baseAddress(baseAddress)
-{}
+{
+   writeCS_CPHA(baseAddress, 1);
+}
 
 SPI::~SPI(){}
 

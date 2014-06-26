@@ -1085,7 +1085,7 @@ portBASE_TYPE xReturn;
 		/* Create the idle task without storing its handle. */
 		xReturn = xTaskCreate( prvIdleTask, ( signed char * ) "IDLE", tskIDLE_STACK_SIZE, ( void * ) NULL, ( tskIDLE_PRIORITY | portPRIVILEGE_BIT ), NULL );
 	}
-	#endif	
+	#endif
 
 	#if ( configUSE_TIMERS == 1 )
 	{
@@ -1114,7 +1114,7 @@ portBASE_TYPE xReturn;
 		/* If configGENERATE_RUN_TIME_STATS is defined then the following
 		macro must be defined to configure the timer/counter used to generate
 		the run time counter time base. */
-		portCONFIGURE_TIMER_FOR_RUN_TIME_STATS();		
+		portCONFIGURE_TIMER_FOR_RUN_TIME_STATS();
 
 		/* Setting up the timer tick is hardware specific and thus in the
 		portable interface. */
