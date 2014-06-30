@@ -8,6 +8,7 @@ extern "C"
 #include <task.h>
 
 void initializePlatform();
+void spawnTasks();
 void task1(void *pParam);
 void task3(void *pParam);
 void statusOn();
