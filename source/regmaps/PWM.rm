@@ -31,7 +31,7 @@ field STA2 1
 field STA3 1
 field STA4 1
 
-registe DMAC 0x08
+register DMAC 0x08
 field DREQ 8
 field PANIC 8
 field NULL 15
@@ -50,4 +50,4 @@ register RNG2 0x20
 field PWM_RNG 32
 
 register DAT2 0x24
-field PDM_DAT 32
+field PWM_DAT 32
