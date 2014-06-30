@@ -2,7 +2,7 @@
 default: kernel.img
 
 # Define toolchain variables
-TOOLCHAIN=C:\\yagarto-20121222\\bin\\arm-none-eabi-
+TOOLCHAIN=arm-none-eabi-
 CC=$(TOOLCHAIN)gcc
 CXX=$(TOOLCHAIN)g++
 AS=$(TOOLCHAIN)as
@@ -63,6 +63,7 @@ ARM_CPP_SRC :=\
    source/Drivers/UART.cpp \
    source/Drivers/GPIO.cpp \
    source/Drivers/SPI.cpp \
+   source/Drivers/PWM.cpp \
    source/Peripherals/SparkfunLCD.cpp \
    source/Peripherals/MAX31855.cpp \
    source/tasks.cpp \
@@ -84,6 +85,7 @@ REGMAPS := \
    source/regmaps/SPI.rm \
    source/regmaps/UART.rm \
    source/regmaps/GPIO.rm \
+   source/regmaps/PWM.rm \
 
 $(foreach regmap,$(REGMAPS),$(eval $(call addRegmap,$(regmap))))
 
