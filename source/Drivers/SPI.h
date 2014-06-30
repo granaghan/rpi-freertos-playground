@@ -28,7 +28,7 @@ class SPI
       void assertChipSelect(uint8_t channel);
       void setTransferActive(bool active);
 
-      static uint8_t* SPI0BaseAddress;
+      static uint8_t* const SPI0BaseAddress;
 
    private:
       static const uint32_t coreClockRate;

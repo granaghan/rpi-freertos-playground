@@ -30,7 +30,7 @@ class UART
       bool txFIFOFull();
       bool txFIFOEmpty();
 
-      static uint8_t* UART0BaseAddress;
+      static uint8_t* const UART0BaseAddress;
 
    private:
       uint8_t* baseAddress;

@@ -7,7 +7,7 @@
 #include <task.h>
 #include <stdint.h>
 
-uint8_t* UART::UART0BaseAddress = reinterpret_cast<uint8_t*>(0x20201000);
+uint8_t* const UART::UART0BaseAddress = reinterpret_cast<uint8_t*>(0x20201000);
 
 UART::UART(uint8_t* baseAddress):
    baseAddress(baseAddress)

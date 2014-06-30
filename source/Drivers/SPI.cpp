@@ -3,7 +3,7 @@
 #include <FreeRTOSConfig.h>
 #include <stdint.h>
 
-uint8_t* SPI::SPI0BaseAddress = (uint8_t*)0x20204000;
+uint8_t* const SPI::SPI0BaseAddress = (uint8_t* const)0x20204000;
 const uint32_t SPI::coreClockRate = 250000000;
 
 typedef enum
