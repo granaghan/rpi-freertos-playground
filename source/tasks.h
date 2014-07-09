@@ -11,6 +11,7 @@ void initializePlatform();
 void spawnTasks();
 void task1(void *pParam);
 void task3(void *pParam);
+void taskBlink(void *pParam);
 void statusOn();
 void statusOff();
 

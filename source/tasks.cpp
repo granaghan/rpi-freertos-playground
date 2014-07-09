@@ -9,6 +9,7 @@ extern "C"
 #include "tasks.h"
 }
 #include "Drivers/GPIO.h"
+#include "Drivers/Clock.h"
 #include "Drivers/PWM.h"
 #include "Drivers/SPI.h"
 #include "Drivers/UART.h"
@@ -61,6 +62,7 @@ extern "C" void spawnTasks()
    MAX31855 temperatureReader(spi, 0);
    TaskStruct taskStruct = {temperatureQueue, lcd, temperatureReader};
 
+   //xTaskCreate(taskBlink, task1Str, 256, &taskStruct, 0, NULL);
 	xTaskCreate(task1, task1Str, 256, &taskStruct, 0, NULL);
    xTaskCreate(task3, task2Str, 256, &taskStruct, 0, NULL);
    vTaskStartScheduler();
@@ -83,19 +85,27 @@ extern "C" void task1(void *pParam)
    GPIO& gpio = GPIO::getSingleton();
    MAX31855& temperatureReader = reinterpret_cast<TaskStruct*>(pParam)->max31855Ref;
    xQueueHandle queue = reinterpret_cast<TaskStruct*>(pParam)->queueHandle;
+   Clock pwmClock(Clock::PWMClockBaseAddress);
+   pwmClock.setDivisor(100, 0);
+   pwmClock.setMASHControl(Clock::MASH1Stage);
+   pwmClock.setClockSource(Clock::clockSourcePLLD);
+   pwmClock.enable();
+
+
    PWM pwm(PWM::PWM0BaseAddress);
    int i = 0;
    uint32_t temperature = 0;
-	
+   pwm.setDutyCycle(0, 75);
+   pwm.setPWMMode(0);
+   
    pwm.enableChannel(0);
    while(1)
    {
       temperature = temperatureReader.readTemperature();
       xQueueSend(queue, &temperature, 0);
-      pwm.setDutyCycle(0, 100);
 
-		i++;
-		if(i&1)
+      i++;
+      if(i&1)
       {
          gpio.setPinLevel(readyLEDPin, GPIO::pinLevelLow);
       }
@@ -104,8 +114,38 @@ extern "C" void task1(void *pParam)
          gpio.setPinLevel(readyLEDPin, GPIO::pinLevelHigh);
       }
 
-		vTaskDelay(500);
-	}
+      if(temperature > 26)
+      {
+         pwm.setDutyCycle(0, 10);
+      }
+      else
+      {
+         pwm.setDutyCycle(0, 75);
+      }
+
+      vTaskDelay(500);
+   }
+}
+
+extern "C" void taskBlink(void *pParam)
+{
+   GPIO& gpio = GPIO::getSingleton();
+   int i = 0;
+   
+   while(1)
+   {
+      i++;
+      if(i&1)
+      {
+         gpio.setPinLevel(readyLEDPin, GPIO::pinLevelLow);
+      }
+      else
+      {
+         gpio.setPinLevel(readyLEDPin, GPIO::pinLevelHigh);
+      }
+
+      vTaskDelay(500);
+   }
 }
 
 extern "C" void task3(void *pParam)

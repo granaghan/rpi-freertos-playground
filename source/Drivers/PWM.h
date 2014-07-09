@@ -20,6 +20,8 @@ class PWM
       void enableChannel(uint8_t channel);
       void disableChannel(uint8_t channel);
       void setDutyCycle(uint8_t channel, uint8_t dutyCycle);
+      void setPWMMode(uint8_t channel);
+      void setMarkSpaceMode(uint8_t channel);
       
       static uint8_t* const PWM0BaseAddress;
 
