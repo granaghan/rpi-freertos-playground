@@ -8,6 +8,7 @@ extern "C"
 #endif
 
 void write32(volatile uint32_t* ptr, uint32_t value);
+void write32Clk(volatile uint32_t* ptr, uint32_t value);
 
 uint32_t read32(volatile uint32_t* ptr);
 

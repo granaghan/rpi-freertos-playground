@@ -15,11 +15,17 @@ CODEGEN_DIR:=$(CURDIR)/codegen
 MK_DIRS:= $(CODEGEN_DIR)
 
 define addRegmap
+ifeq ($($(basename $(notdir $1))_READFUNC),)
+$(basename $(notdir $1))_READFUNC:=read32
+endif
+ifeq ($($(basename $(notdir $1))_WRITEFUNC),)
+$(basename $(notdir $1))_WRITEFUNC:=write32
+endif
 ARM_SRC+=$(CODEGEN_DIR)/$(basename $(notdir $1)).c
 codegen:$(CODEGEN_DIR)/$(basename $(notdir $1)).c $(CODEGEN_DIR)/$(basename $(notdir $1)).h
 $(CODEGEN_DIR)/$(basename $(notdir $1)).c:$1
 	@echo $(notdir $$@) \<-- $(notdir $$<)
-	@$(PYTHON) source/regmaps/RegMapParse.py $$< | python source/regmaps/GenerateRegisterMap.py --include "io.h" --read_func "read32" --write_func "write32"> $$@
+	$(PYTHON) source/regmaps/RegMapParse.py $$< | python source/regmaps/GenerateRegisterMap.py --include "io.h" --read_func $$($(basename $(notdir $1))_READFUNC) --write_func $$($(basename $(notdir $1))_WRITEFUNC) > $$@
 $(CODEGEN_DIR)/$(basename $(notdir $1)).h:$1
 	@echo $(notdir $$@) \<-- $(notdir $$<)
 	@$(PYTHON) source/regmaps/RegMapParse.py $$< | python source/regmaps/GenerateRegisterMap.py --header > $$@
@@ -64,6 +70,7 @@ ARM_CPP_SRC :=\
    source/Drivers/GPIO.cpp \
    source/Drivers/SPI.cpp \
    source/Drivers/PWM.cpp \
+   source/Drivers/Clock.cpp \
    source/Peripherals/SparkfunLCD.cpp \
    source/Peripherals/MAX31855.cpp \
    source/tasks.cpp \
@@ -86,6 +93,9 @@ REGMAPS := \
    source/regmaps/UART.rm \
    source/regmaps/GPIO.rm \
    source/regmaps/PWM.rm \
+   source/regmaps/CLOCK.rm \
+
+CLOCK_WRITEFUNC=write32Clk
 
 $(foreach regmap,$(REGMAPS),$(eval $(call addRegmap,$(regmap))))
 
