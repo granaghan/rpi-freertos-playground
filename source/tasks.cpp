@@ -63,7 +63,7 @@ extern "C" void spawnTasks()
    TaskStruct taskStruct = {temperatureQueue, lcd, temperatureReader};
 
    //xTaskCreate(taskBlink, task1Str, 256, &taskStruct, 0, NULL);
-	xTaskCreate(task1, task1Str, 256, &taskStruct, 0, NULL);
+   xTaskCreate(task1, task1Str, 256, &taskStruct, 0, NULL);
    xTaskCreate(task3, task2Str, 256, &taskStruct, 0, NULL);
    vTaskStartScheduler();
 }
@@ -172,5 +172,5 @@ extern "C" void task3(void *pParam)
          lcd.clear();
          lcd.sendString(strBuffer);
       }
-	}
+   }
 }
