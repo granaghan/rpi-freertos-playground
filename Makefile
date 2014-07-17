@@ -71,6 +71,7 @@ ARM_CPP_SRC :=\
    source/Drivers/SPI.cpp \
    source/Drivers/PWM.cpp \
    source/Drivers/Clock.cpp \
+   source/Drivers/I2C.cpp \
    source/Peripherals/SparkfunLCD.cpp \
    source/Peripherals/MAX31855.cpp \
    source/tasks.cpp \
@@ -94,6 +95,7 @@ REGMAPS := \
    source/regmaps/GPIO.rm \
    source/regmaps/PWM.rm \
    source/regmaps/CLOCK.rm \
+   source/regmaps/I2C.rm \
 
 CLOCK_WRITEFUNC=write32Clk
 

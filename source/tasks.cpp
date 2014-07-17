@@ -8,8 +8,9 @@ extern "C"
 #include "Drivers/interrupts.h"
 #include "tasks.h"
 }
-#include "Drivers/GPIO.h"
 #include "Drivers/Clock.h"
+#include "Drivers/GPIO.h"
+#include "Drivers/I2C.h"
 #include "Drivers/PWM.h"
 #include "Drivers/SPI.h"
 #include "Drivers/UART.h"
@@ -39,9 +40,13 @@ extern "C" void initializePlatform()
    gpio.setPinFunction(9, GPIO::pinFunctionAlternate0);
    gpio.setPinFunction(10, GPIO::pinFunctionAlternate0);
    gpio.setPinFunction(11, GPIO::pinFunctionAlternate0);
+   gpio.setPinFunction(0, GPIO::pinFunctionAlternate0);
+   gpio.setPinFunction(1, GPIO::pinFunctionAlternate0);
+   gpio.setPinFunction(18, GPIO::pinFunctionAlternate5);
    gpio.setPinPullDirection(uartTxPin, GPIO::pullDirectionDown);
    gpio.setPinPullDirection(uartRxPin, GPIO::pullDirectionDown);
-   gpio.setPinFunction(18, GPIO::pinFunctionAlternate5);
+   gpio.setPinPullDirection(0, GPIO::pullDirectionUp);
+   gpio.setPinPullDirection(1, GPIO::pullDirectionUp);
    //gpio.setPinPullDirection(7, GPIO::pullDirectionUp);
    //gpio.setPinPullDirection(8, GPIO::pullDirectionUp);
    //gpio.setPinPullDirection(9, GPIO::pullDirectionUp);
@@ -97,7 +102,7 @@ extern "C" void task1(void *pParam)
    uint32_t temperature = 0;
    pwm.setDutyCycle(0, 75);
    pwm.setPWMMode(0);
-   
+
    pwm.enableChannel(0);
    while(1)
    {
@@ -131,7 +136,7 @@ extern "C" void taskBlink(void *pParam)
 {
    GPIO& gpio = GPIO::getSingleton();
    int i = 0;
-   
+
    while(1)
    {
       i++;
@@ -158,6 +163,15 @@ extern "C" void task3(void *pParam)
    MAX31855& temperatureReader = reinterpret_cast<TaskStruct*>(pParam)->max31855Ref;
    xQueueHandle queue = reinterpret_cast<TaskStruct*>(pParam)->queueHandle;
 
+   I2C i2c(I2C::I2C0BaseAddress);
+   i2c.setAddress(1);
+   i2c.setTransferMode(I2C::transferModeRead);
+   i2c.setClockDivider(2500); // 100kHz
+   i2c.setDataLength(1);
+   //i2c.setClockStretchTimeout(255);
+   i2c.clearFIFO();
+   i2c.enable();
+
    uint32_t temperature = 0;
    char strBuffer[48];
 
@@ -172,5 +186,17 @@ extern "C" void task3(void *pParam)
          lcd.clear();
          lcd.sendString(strBuffer);
       }
-	}
+      i2c.startTransfer();
+      while(i2c.dataAvailable() && !i2c.checkForError())
+      {
+         lcd.setCursorPosition(15);
+         snprintf(strBuffer, 48, " %d", i2c.read());
+         lcd.sendString(strBuffer);
+      }
+      if(i2c.ackErrorDetected())
+      {
+         lcd.setCursorPosition(15);
+         lcd.sendString(" ack error");
+      }
+   }
 }
