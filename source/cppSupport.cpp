@@ -28,33 +28,33 @@ void _init(void)
 
 namespace __cxxabiv1
 {
-	/* guard variables */
+   /* guard variables */
 
-	/* The ABI requires a 64-bit type.  */
-	__extension__ typedef int __guard __attribute__((mode(__DI__)));
+   /* The ABI requires a 64-bit type.  */
+   __extension__ typedef int __guard __attribute__((mode(__DI__)));
 
-	extern "C" int __cxa_guard_acquire (__guard *);
-	extern "C" void __cxa_guard_release (__guard *);
-	extern "C" void __cxa_guard_abort (__guard *);
+   extern "C" int __cxa_guard_acquire (__guard *);
+   extern "C" void __cxa_guard_release (__guard *);
+   extern "C" void __cxa_guard_abort (__guard *);
 
    // Enter a critical section so we can't be interrupted.
-	extern "C" int __cxa_guard_acquire (__guard *g)
-	{
+   extern "C" int __cxa_guard_acquire (__guard *g)
+   {
       taskENTER_CRITICAL();
-		return !*(char *)(g);
-	}
+      return !*(char *)(g);
+   }
 
    // Object is always flagged as created. Exit critical section
    // after marking object as created.
-	extern "C" void __cxa_guard_release (__guard *g)
-	{
-		*(char *)g = 1;
+   extern "C" void __cxa_guard_release (__guard *g)
+   {
+      *(char *)g = 1;
       taskEXIT_CRITICAL();
-	}
+   }
 
    // Since we never say we failed, there's nothing to do here.
-	extern "C" void __cxa_guard_abort (__guard *)
-	{
+   extern "C" void __cxa_guard_abort (__guard *)
+   {
 
-	}
+   }
 }

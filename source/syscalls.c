@@ -88,24 +88,24 @@
 /* Provided to keep the linker happy. */
 void _exit_( int status )
 {
-	( void ) status;
-	//vAssertCalled( __LINE__, __FILE__ );
-	for( ;; );
+   ( void ) status;
+   //vAssertCalled( __LINE__, __FILE__ );
+   for( ;; );
 }
 /*-----------------------------------------------------------*/
 
 /* Provided to keep the linker happy. */
 int _read( void )
 {
-	return 0;
+   return 0;
 }
 /*-----------------------------------------------------------*/
 
 /* Provided to keep the linker happy. */
 int _write( int x )
 {
-	( void ) x;
-	return 0;
+   ( void ) x;
+   return 0;
 }
 /*-----------------------------------------------------------*/
 
